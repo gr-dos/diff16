@@ -1,0 +1,6 @@
+*.o
+*.obj
+*.err
+*.exe
+*.map
+/build/
