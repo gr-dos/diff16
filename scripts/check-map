@@ -1,0 +1,29 @@
+#!/bin/sh
+#
+# Check a wlink map: every module linked must be one of diff16's own
+# objects or a member of libc16 (docs/DESIGN.md §9, "Runtime release
+# gate"), so no Open Watcom runtime is in the executable.
+#
+# usage: scripts/check-map MAP LIBRARY OBJDIR
+
+set -eu
+
+map=$1 lib=$2 objdir=$3
+
+[ -f "$map" ] || { echo "check-map: $map not found" >&2; exit 2; }
+
+bad=$(sed -n 's/^Module: //p' "$map" | while IFS= read -r m; do
+    case $m in
+    "$lib("*) ;;
+    "$objdir"/*.obj"($objdir"/*.obj")") ;;
+    *) echo "$m" ;;
+    esac
+done)
+
+if [ -n "$bad" ]; then
+    echo "check-map: $map: modules from outside diff16 and libc16:" >&2
+    echo "$bad" >&2
+    exit 1
+fi
+n=$(grep -c '^Module: ' "$map")
+echo "check-map: $map: $n modules, all diff16's or libc16's"
