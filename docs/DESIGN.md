@@ -37,13 +37,13 @@ The project prioritizes **correct and deterministic patches, safe failure, predi
 
 ### 2.3 Distribution
 
-Deliver `DIFF16.EXE`, source, build instructions, a copy of the MIT license, and documentation. `libc16` remains independently MIT licensed. No Open Watcom runtime objects or libraries may appear in a release executable. The binary must run without GR-DOS-specific kernel services beyond standard DOS interfaces.
+Deliver `DIFF.EXE`, source, build instructions, a copy of the MIT license, and documentation. `libc16` remains independently MIT licensed. No Open Watcom runtime objects or libraries may appear in a release executable. The binary must run without GR-DOS-specific kernel services beyond standard DOS interfaces.
 
 ## 3. Goals and non-goals
 
 ### Goals
 
-1. Produce a correct unified diff between two DOS text files using `diff16 -u OLD NEW`.
+1. Produce a correct unified diff between two DOS text files using `diff -u OLD NEW`.
 2. Support `-U N` for the number of context lines, with a sensible default of three.
 3. Return conventional exit statuses: `0` identical, `1` differences found, `2` usage/I/O/resource error.
 4. Read files with LF, CRLF, and a final line lacking a terminator; define line-ending treatment precisely.
@@ -64,8 +64,8 @@ Deliver `DIFF16.EXE`, source, build instructions, a copy of the MIT license, and
 ## 4. Initial command-line interface
 
 ```text
-DIFF16 [-u] [-U N] [-o FILE] OLD NEW
-DIFF16 -h
+DIFF [-u] [-U N] [-o FILE] OLD NEW
+DIFF -h
 ```
 
 - **`-u`:** Unified format; default in v0.01. A plain non-unified output mode is not required.
@@ -216,7 +216,7 @@ Create independently authored fixtures for:
 
 For every fixture:
 
-1. Run `DIFF16 OLD NEW` in DOSBox-X and/or QEMU; record output and exit status.
+1. Run `DIFF OLD NEW` in DOSBox-X and/or QEMU; record output and exit status.
 2. Independently validate unified-diff syntax and hunk counts/ranges.
 3. Apply the output with a modern Unix `patch` against a copied `OLD` and compare normalized content and final-newline state with `NEW`.
 4. Apply with `patch16` once available, under its documented line-ending policy, with the same verification.
@@ -249,7 +249,7 @@ Release only when all of the following are true:
 
 - Source is an original MIT implementation with documented provenance; no copied GPL, historical noncommercial, Schilling-authored, or proprietary implementation source.
 - Any new `libc16` functionality is independently implemented and MIT licensed, passes its own model/ABI tests, and is released/pinned appropriately.
-- `DIFF16.EXE` is 8086-compatible and links exclusively to the allowed `libc16` runtime and project code.
+- `DIFF.EXE` is 8086-compatible and links exclusively to the allowed `libc16` runtime and project code.
 - Unified diffs apply with Unix `patch` and `patch16` on representative fixtures, reconstructing the intended normalized text.
 - Identical files produce no patch and exit `0`; differences exit `1`; all genuine errors exit `2`.
 - LF/CRLF policy and final-newline semantics are documented and verified.

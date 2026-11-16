@@ -2,7 +2,7 @@ name: release
 
 # main only changes by merging a PR, so a push to main is a merge.
 # If VERSION names a version without a tag, tag the merge commit and
-# publish a release with diff16.exe attached.
+# publish a release with diff.exe attached.
 
 on:
   push:
@@ -55,7 +55,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          gh release create "v$VERSION" diff16.exe \
+          gh release create "v$VERSION" diff.exe \
             --target "$GITHUB_SHA" \
             --title "v$VERSION" \
             --generate-notes

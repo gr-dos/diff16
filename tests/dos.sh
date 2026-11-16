@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Test diff16.exe, and the stress builds dtiny.exe and dweak.exe, under
+# Test diff.exe, and the stress builds dtiny.exe and dweak.exe, under
 # DOSBox-X.
 #
 # Fixtures are made on the host, one batch file runs every DOS step, and
@@ -10,7 +10,7 @@
 # than "if errorlevel N echo ... >file" because the DOSBox-X shell opens
 # the redirection even when the test is false.
 #
-# Checks: diff16.exe's output is byte for byte the host build's for the
+# Checks: diff.exe's output is byte for byte the host build's for the
 # same arguments (the output depends only on the input, not on memory);
 # the stress builds' diffs are well formed and patch OLD into NEW; exit
 # statuses; -o never replaces an input, however it is named; temporary
@@ -18,7 +18,7 @@
 # between them, more keys than conventional memory holds, so the release
 # build spills to a temporary file too.
 #
-# Usage: tests/dos.sh DIFF16.EXE DTINY.EXE DWEAK.EXE HOST-DIFF16
+# Usage: tests/dos.sh DIFF.EXE DTINY.EXE DWEAK.EXE HOST-DIFF
 # Environment: DOSBOX (default dosbox-x), FUZZ (default 30) random pairs,
 #              KEEP=1 to keep the work directory.
 
@@ -41,7 +41,7 @@ pass=0
 fail=0
 cd "$work" || exit 2
 mkdir dos hostrun
-cp "$exe" dos/diff16.exe
+cp "$exe" dos/diff.exe
 cp "$tiny" dos/dtiny.exe
 cp "$weak" dos/dweak.exe
 
@@ -116,32 +116,32 @@ step() { n=$((n + 1)); echo "$n|$1|$2|$3" >> $steps; }
 
 for p in $PAIRS; do
     a=${p%%:*} b=${p#*:}
-    step "diff16 $a $b" x same
+    step "diff $a $b" x same
     step "dtiny $a $b" x apply
     step "dweak $a $b" x apply
 done
-step "diff16 -U 0 abc.txt abc2.txt" 1 same
-step "diff16 -U0 big1.txt big2.txt" 1 same
-step "diff16 -U 99 abc.txt abcmix.txt" 1 same
-step "diff16 -u one.txt one.txt" 0 same
-step "diff16 abc.txt abcmix.txt" 1 same
-step "diff16 -h" 0 none
-step "diff16" 2 none
-step "diff16 one.txt" 2 none
-step "diff16 -x one.txt one.txt" 2 none
-step "diff16 -U 100 one.txt one.txt" 2 none
-step "diff16 one.txt nosuch.txt" 2 none
-step "diff16 zero.txt one.txt" 2 none
-step "diff16 one.txt tmpd" 2 none
+step "diff -U 0 abc.txt abc2.txt" 1 same
+step "diff -U0 big1.txt big2.txt" 1 same
+step "diff -U 99 abc.txt abcmix.txt" 1 same
+step "diff -u one.txt one.txt" 0 same
+step "diff abc.txt abcmix.txt" 1 same
+step "diff -h" 0 none
+step "diff" 2 none
+step "diff one.txt" 2 none
+step "diff -x one.txt one.txt" 2 none
+step "diff -U 100 one.txt one.txt" 2 none
+step "diff one.txt nosuch.txt" 2 none
+step "diff zero.txt one.txt" 2 none
+step "diff one.txt tmpd" 2 none
 # -o: never an input, however named; no file left after an error
-step "diff16 -o keep1.txt keep1.txt keep2.txt" 2 none
-step "diff16 -o KEEP2.TXT keep1.txt keep2.txt" 2 none
-step "diff16 -o .\\keep1.txt keep1.txt keep2.txt" 2 none
-step "diff16 -o c:keep1.txt keep1.txt keep2.txt" 2 none
-step "diff16 -o c:\\tmpd\\..\\keep2.txt keep1.txt keep2.txt" 2 none
-step "diff16 -o keep1.txtx keep1.txt keep2.txt" 2 none
-step "diff16 -o out.dif keep1.txt keep2.txt" 1 none
-step "diff16 -o bad.dif one.txt zero.txt" 2 none
+step "diff -o keep1.txt keep1.txt keep2.txt" 2 none
+step "diff -o KEEP2.TXT keep1.txt keep2.txt" 2 none
+step "diff -o .\\keep1.txt keep1.txt keep2.txt" 2 none
+step "diff -o c:keep1.txt keep1.txt keep2.txt" 2 none
+step "diff -o c:\\tmpd\\..\\keep2.txt keep1.txt keep2.txt" 2 none
+step "diff -o keep1.txtx keep1.txt keep2.txt" 2 none
+step "diff -o out.dif keep1.txt keep2.txt" 1 none
+step "diff -o bad.dif one.txt zero.txt" 2 none
 
 cd ..
 

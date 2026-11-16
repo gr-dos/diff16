@@ -30,7 +30,7 @@ An AI model's general knowledge comes from training on a large body of text, whi
 
 ## Runtime
 
-`DIFF16.EXE` links only its own objects and libc16 0.04 (`LIBC16C.LIB`, MIT), pinned by version and SHA-256 in `scripts/fetch-libc16`. `scripts/check-map` fails the build if the link map shows any other module. diff16 adds nothing to libc16; the two DOS calls libc16 does not have (delete a file, canonical name) are in `src/sys.c` through libc16's `intdosx`.
+`DIFF.EXE` links only its own objects and libc16 0.04 (`LIBC16C.LIB`, MIT), pinned by version and SHA-256 in `scripts/fetch-libc16`. `scripts/check-map` fails the build if the link map shows any other module. diff16 adds nothing to libc16; the two DOS calls libc16 does not have (delete a file, canonical name) are in `src/sys.c` through libc16's `intdosx`.
 
 ## Test oracles
 
@@ -38,4 +38,4 @@ Used as black boxes only:
 
 - **GNU patch 2.8** applies every diff the tests make; its result must equal NEW. This is the primary oracle (DESIGN.md §10.2).
 - **GNU diff** was run by hand on a few inputs while writing, to compare formats; the tests do not use it.
-- **DOSBox-X** runs `DIFF16.EXE`.
+- **DOSBox-X** runs `DIFF.EXE`.
