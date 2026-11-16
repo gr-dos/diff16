@@ -11,6 +11,7 @@ This document says what `DIFF.EXE` does. It is written for this project, from DE
 ```text
 DIFF [-u] [-U N] [-o FILE] [--] OLD NEW
 DIFF -h
+DIFF --version
 ```
 
 | Option | Meaning |
@@ -19,6 +20,7 @@ DIFF -h
 | `-U N`, `-UN` | `N` unchanged lines of context around each change, `0` to `99`, decimal digits only. Default `3`. |
 | `-o FILE`, `-oFILE` | Write the diff to `FILE` instead of standard output (see "Output file"). |
 | `-h`, `-?`, `/?`, `--help` | Print help to standard output and exit `0`. |
+| `--version` | Print `diff (dos-diff16) VERSION` and a newline to standard output, where `VERSION` is the `VERSION` file's contents, and exit `0`. |
 | `--` | Every later argument is a file name, even one that starts with `-`. |
 
 Options and names may be in any order. An unknown option, a missing or invalid value, or other than two file names is a usage error: a message and a hint on standard error, exit `2`. Options are case-sensitive (`-u` and `-U` differ).

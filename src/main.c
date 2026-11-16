@@ -6,16 +6,23 @@
 
 #define CONTEXT_MAX 99
 
+static const char version_text[] = "diff (dos-diff16) " VERSION "\n";
+
+/* In two parts: C89 compilers need only take 509 characters a string. */
 static const char usage_text[] =
     "diff " VERSION " - compare text files, writing a unified diff\n"
     "\n"
     "usage: diff [-u] [-U N] [-o FILE] [--] OLD NEW\n"
+    "       diff -h | --version\n"
     "\n"
-    "  -u       unified format (the default, and the only format)\n"
-    "  -U N     N lines of context, 0 to 99 (default 3)\n"
-    "  -o FILE  write the diff to FILE, not standard output\n"
-    "  -h       show this help\n"
-    "  --       the next arguments are file names, even if they start with -\n"
+    "  -u         unified format (the default, and the only format)\n"
+    "  -U N       N lines of context, 0 to 99 (default 3)\n"
+    "  -o FILE    write the diff to FILE, not standard output\n"
+    "  -h         show this help\n"
+    "  --version  show the version\n"
+    "  --         the next arguments are file names, even if they start with -\n";
+
+static const char usage_notes[] =
     "\n"
     "Lines ending in LF and in CR LF compare equal; the diff uses LF.\n"
     "Exit status: 0 no differences, 1 differences, 2 trouble.\n";
@@ -38,6 +45,17 @@ void main_cleanup(void)
         outfd = -1;
         sys_unlink(outname);
     }
+}
+
+/* Help or version on standard output; the program then exits 0. */
+static int print_text(const char *a, const char *b)
+{
+    out_open(1, "standard output");
+    out_str(a);
+    if (b)
+        out_str(b);
+    out_flush();
+    return EXIT_SAME;
 }
 
 static void usage_error(const char *a, const char *b)
@@ -107,12 +125,11 @@ int main(int argc, char **argv)
             else if (strcmp(a, "-u") == 0)
                 ;
             else if (strcmp(a, "-h") == 0 || strcmp(a, "-?") == 0
-                     || strcmp(a, "--help") == 0) {
-                out_open(1, "standard output");
-                out_str(usage_text);
-                out_flush();
-                return EXIT_SAME;
-            } else if (a[1] == 'U' || a[1] == 'o') {
+                     || strcmp(a, "--help") == 0)
+                return print_text(usage_text, usage_notes);
+            else if (strcmp(a, "--version") == 0)
+                return print_text(version_text, NULL);
+            else if (a[1] == 'U' || a[1] == 'o') {
                 v = a + 2;
                 if (!*v) {
                     if (++i == argc)
@@ -125,12 +142,9 @@ int main(int argc, char **argv)
                     outname = v;
             } else
                 usage_error("unknown option", a);
-        } else if (strcmp(a, "/?") == 0 && opts) {
-            out_open(1, "standard output");
-            out_str(usage_text);
-            out_flush();
-            return EXIT_SAME;
-        } else {
+        } else if (strcmp(a, "/?") == 0 && opts)
+            return print_text(usage_text, usage_notes);
+        else {
             if (nnames == 2)
                 usage_error("too many file names", a);
             names[nnames++] = a;

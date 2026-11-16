@@ -108,6 +108,7 @@ EOF
 # Steps: "N|PROGRAM ARGS|EXPECTED-STATUS|KIND" where KIND is
 #   same    output must equal the host build's for ARGS
 #   apply   output must patch OLD into NEW (the last two ARGS)
+#   version output must be "diff (dos-diff16) VERSION"
 #   none    status only
 steps=steps.lst
 : > $steps
@@ -126,6 +127,7 @@ step "diff -U 99 abc.txt abcmix.txt" 1 same
 step "diff -u one.txt one.txt" 0 same
 step "diff abc.txt abcmix.txt" 1 same
 step "diff -h" 0 none
+step "diff --version" 0 version
 step "diff" 2 none
 step "diff one.txt" 2 none
 step "diff -x one.txt one.txt" 2 none
@@ -229,6 +231,11 @@ while IFS='|' read -r num cmd want kind; do
             ok
         else
             not_ok "step $num ($cmd): patch did not give NEW"
+        fi ;;
+    version)
+        printf 'diff (dos-diff16) %s\n' "$(cat "$top/VERSION")" > version.want
+        if cmp -s version.want "$out"; then ok; else
+            not_ok "step $num ($cmd): wrote '$(cat "$out")'"
         fi ;;
     none)
         ok ;;
