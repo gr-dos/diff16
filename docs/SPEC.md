@@ -4,13 +4,13 @@
 **Status:** implemented; this is the contract the tests check  
 **Design:** [DESIGN.md](DESIGN.md) (goals, constraints and open questions)
 
-This document says what `DIFF16.EXE` does. It is written for this project, from DESIGN.md and from the public descriptions of the unified diff format and of the O(ND) difference algorithm; see [PROVENANCE.md](PROVENANCE.md).
+This document says what `DIFF.EXE` does. It is written for this project, from DESIGN.md and from the public descriptions of the unified diff format and of the O(ND) difference algorithm; see [PROVENANCE.md](PROVENANCE.md).
 
 ## Command line
 
 ```text
-DIFF16 [-u] [-U N] [-o FILE] [--] OLD NEW
-DIFF16 -h
+DIFF [-u] [-U N] [-o FILE] [--] OLD NEW
+DIFF -h
 ```
 
 | Option | Meaning |
@@ -67,7 +67,7 @@ The diff is a unified diff, written with LF line endings, and nothing at all whe
 - **Lines.** Each line is a prefix and the line's bytes without its terminator, then LF: a space for context (written from OLD; it is equal to NEW's), `-` for a line deleted from OLD, `+` for a line inserted from NEW. Within a change the deleted lines come before the inserted lines. A CR inside a line, including one at the end of the last line, is kept; the CR of a CR LF terminator is not written.
 - **No newline.** After a line with no terminator — the last line of a file without a final newline — the next line of the diff is `\ No newline at end of file`.
 - **Context.** Each hunk has up to `N` context lines before its first change and after its last, fewer at the start or end of the file. Two changes separated by at most `2N` equal lines are in the same hunk; changes further apart are in separate hunks. With `-U 0` every change separated by any equal line is its own hunk.
-- **Determinism.** The output depends only on the two files and the options: not on free memory, temporary storage, the DOS version or the machine. The host build (`make host`) and `DIFF16.EXE` write byte-identical diffs, which the DOS tests check.
+- **Determinism.** The output depends only on the two files and the options: not on free memory, temporary storage, the DOS version or the machine. The host build (`make host`) and `DIFF.EXE` write byte-identical diffs, which the DOS tests check.
 
 GNU `patch` applies the diff to OLD to produce NEW (with OLD's CR LF terminators normalized, or with `patch --binary` on a normalized copy). diff16 does not write `diff --git`, `index` or mode lines.
 
@@ -82,7 +82,7 @@ Which lines are reported as unchanged is diff16's choice, made as follows; any c
 
 ## Memory and temporary files
 
-`DIFF16.EXE` is a compact-model program: code is under 64 KB, and data uses all the conventional memory DOS gives it.
+`DIFF.EXE` is a compact-model program: code is under 64 KB, and data uses all the conventional memory DOS gives it.
 
 At startup it allocates everything of fixed size: two 4 KB read buffers, the search arrays (two of 4,099 four-byte entries, 32 KB), and two 2 KB page frames for each of four paged arrays (16 KB). It then reads both files once, storing four bytes of key per line in 2 KB pages taken from the heap. When the heap is exhausted, the remaining pages of that array, and of every array after it, are written to a temporary file and read back through the frames. Change lists are paged the same way. Nothing else is allocated later, so running out of memory after startup only moves data to disk.
 
@@ -106,7 +106,7 @@ Without `-o`, the diff goes to standard output, which is set to binary mode so t
 
 ## Diagnostics
 
-Messages go to standard error as `diff16: NAME: WHAT: WHY`. DOS cannot redirect standard error, so they appear on the console.
+Messages go to standard error as `diff: NAME: WHAT: WHY`. DOS cannot redirect standard error, so they appear on the console.
 
 ## Interruption and DOS errors
 

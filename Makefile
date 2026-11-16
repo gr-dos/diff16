@@ -1,11 +1,11 @@
-# Build diff16.exe for 16-bit MS-DOS with Open Watcom and libc16.
+# Build diff.exe (the diff16 project) for 16-bit MS-DOS with Open Watcom and libc16.
 #   make                         fetch the pinned libc16 release into
-#                                build/libc16, then build diff16.exe
+#                                build/libc16, then build diff.exe
 #   make LIBC16_ROOT=../libc16   use a libc16 checkout built with its make
-#   make host                    build diff16 for this host (tests)
+#   make host                    build diff for this host (tests)
 #   make test                    host tests, then DOS tests in DOSBox-X
 #
-# diff16.exe is a compact-model program (-mc), compiled and linked against
+# diff.exe is a compact-model program (-mc), compiled and linked against
 # libc16's compact library only (its ABI is in libc16's docs/ABI.md), with
 # the Open Watcom snapshot libc16 was built with: the libc16 tree's
 # tools/fetch-watcom fetches it into build/tools.
@@ -42,17 +42,17 @@ HEADERS = src/d16.h
 TINY_DEFS = -DCMP_DMAX=4L -DBA_RES_LIMIT=1
 WEAK_DEFS = -DD16_WEAK_HASH
 
-all: diff16.exe
+all: diff.exe
 
 # Objects go in build/r; the stress builds' in build/t and build/w.
 R_OBJS = $(NAMES:%=build/r/%.obj)
 T_OBJS = $(NAMES:%=build/t/%.obj)
 W_OBJS = $(NAMES:%=build/w/%.obj)
 
-diff16.exe: $(R_OBJS) $(LIBC16) $(TOOLS_ENV)
-	$(WATCOM_ENV) && wlink $(LDOPTS), map=build/r/diff16.map \
+diff.exe: $(R_OBJS) $(LIBC16) $(TOOLS_ENV)
+	$(WATCOM_ENV) && wlink $(LDOPTS), map=build/r/diff.map \
 	  format dos name $@ $(R_OBJS:%=file %) library $(LIBC16)
-	sh scripts/check-map build/r/diff16.map $(LIBC16) build/r
+	sh scripts/check-map build/r/diff.map $(LIBC16) build/r
 
 build/dtiny.exe: $(T_OBJS) $(LIBC16) $(TOOLS_ENV)
 	$(WATCOM_ENV) && wlink $(LDOPTS), map=build/t/dtiny.map \
@@ -88,33 +88,33 @@ $(TOOLS_ENV): $(LIBC16)
 	  && printf 'WATCOM=%s\nexport WATCOM\n' "$$watcom" > $@
 
 # host builds
-HOST = build/host/diff16 build/host/diff16-tiny build/host/diff16-weak
+HOST = build/host/diff build/host/diff-tiny build/host/diff-weak
 
 host: $(HOST)
 
-build/host/diff16: $(SRCS) $(HEADERS) VERSION
+build/host/diff: $(SRCS) $(HEADERS) VERSION
 	mkdir -p build/host
 	$(HOSTCC) $(HOSTCFLAGS) -o $@ $(SRCS)
 
-build/host/diff16-tiny: $(SRCS) $(HEADERS) VERSION
+build/host/diff-tiny: $(SRCS) $(HEADERS) VERSION
 	mkdir -p build/host
 	$(HOSTCC) $(HOSTCFLAGS) $(TINY_DEFS) -o $@ $(SRCS)
 
-build/host/diff16-weak: $(SRCS) $(HEADERS) VERSION
+build/host/diff-weak: $(SRCS) $(HEADERS) VERSION
 	mkdir -p build/host
 	$(HOSTCC) $(HOSTCFLAGS) $(WEAK_DEFS) -o $@ $(SRCS)
 
 test-host: $(HOST)
 	sh tests/host.sh build/host
 
-test-dos: diff16.exe build/dtiny.exe build/dweak.exe build/host/diff16
-	sh tests/dos.sh $(CURDIR)/diff16.exe $(CURDIR)/build/dtiny.exe \
-	  $(CURDIR)/build/dweak.exe $(CURDIR)/build/host/diff16
+test-dos: diff.exe build/dtiny.exe build/dweak.exe build/host/diff
+	sh tests/dos.sh $(CURDIR)/diff.exe $(CURDIR)/build/dtiny.exe \
+	  $(CURDIR)/build/dweak.exe $(CURDIR)/build/host/diff
 
 test: test-host test-dos
 
 clean:
-	rm -rf *.o *.obj *.err diff16.exe build/r build/t build/w build/host \
+	rm -rf *.o *.obj *.err diff.exe build/r build/t build/w build/host \
 	  build/dtiny.exe build/dweak.exe
 
 .PHONY: all host test test-host test-dos clean

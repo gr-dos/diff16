@@ -6,7 +6,7 @@
 # must be well formed (tests/check.pl), and GNU patch applied to OLD must
 # give NEW, both with line endings normalized (diff16 compares CR LF and
 # LF as equal and writes LF). The exit status must be 0 exactly when the
-# normalized files are equal. The stress builds (diff16-tiny, -weak) are
+# normalized files are equal. The stress builds (diff-tiny, -weak) are
 # held to the same standard.
 #
 # Usage: tests/host.sh [DIR]        (default build/host)
@@ -79,8 +79,8 @@ status() {
     if [ "$rc" = "$want" ]; then ok; else not_ok "$*: exit $rc, expected $want"; fi
 }
 
-D="$dir/diff16"
-BUILDS="$dir/diff16 $dir/diff16-tiny $dir/diff16-weak"
+D="$dir/diff"
+BUILDS="$dir/diff $dir/diff-tiny $dir/diff-weak"
 
 # ------------------------------------------------------------------
 # fixed cases
@@ -260,20 +260,20 @@ fi
 
 # temporary files: in TMP, and removed afterwards
 mkdir tmpd
-TMP=$work/tmpd "$dir/diff16-tiny" big1 big2 > o.txt
-[ $? = 1 ] && ok || not_ok "diff16-tiny big1 big2 with TMP"
+TMP=$work/tmpd "$dir/diff-tiny" big1 big2 > o.txt
+[ $? = 1 ] && ok || not_ok "diff-tiny big1 big2 with TMP"
 [ -z "$(ls tmpd)" ] && ok || not_ok "temporary files left in TMP: $(ls tmpd)"
-TMP=$work/nosuchdir TEMP=$work/tmpd "$dir/diff16-tiny" big1 big2 | cmp -s - o.txt \
+TMP=$work/nosuchdir TEMP=$work/tmpd "$dir/diff-tiny" big1 big2 | cmp -s - o.txt \
     && ok || not_ok "fallback from a bad TMP to TEMP"
 chmod 555 tmpd
-TMP=$work/tmpd TEMP=$work/tmpd "$dir/diff16-tiny" big1 big2 > o2.txt 2>/dev/null
+TMP=$work/tmpd TEMP=$work/tmpd "$dir/diff-tiny" big1 big2 > o2.txt 2>/dev/null
 cmp -s o.txt o2.txt && ok || not_ok "fallback to the current directory"
 chmod 755 tmpd
 ls D16*.TMP >/dev/null 2>&1 && not_ok "temporary files left in ." || ok
 
 # the release build makes the same diff whatever the memory
 "$D" big1 big2 > o1.txt
-"$dir/diff16-tiny" big1 big2 > o2.txt
+"$dir/diff-tiny" big1 big2 > o2.txt
 perl "$top/tests/check.pl" o2.txt && ok || not_ok "tiny big1 big2 malformed"
 
 # ------------------------------------------------------------------

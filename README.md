@@ -4,17 +4,20 @@ A small text-file comparison tool for 16-bit MS-DOS that writes
 **unified diffs**, for `patch16` or any Unix `patch`. Built with Open
 Watcom and [libc16](https://github.com/gr-dos/libc16); MIT licensed.
 
-`DIFF16.EXE` is a compact-model, real-mode 8086 executable (about 16 KB)
+`DIFF.EXE` is a compact-model, real-mode 8086 executable (about 16 KB)
 that runs on DOS 3.0 and later, from an original IBM PC up. It compares
 files larger than memory, using temporary files when it must, and never
 writes a wrong diff to save memory or time.
 
-    C:\SRC>DIFF16 OLD\MAIN.C NEW\MAIN.C >MAIN.DIF
+The program is called `diff`; the project is called diff16 only to tell
+it apart from diffs for 32-bit and larger systems.
+
+    C:\SRC>DIFF OLD\MAIN.C NEW\MAIN.C >MAIN.DIF
 
 ## Usage
 
-    diff16 [-u] [-U N] [-o FILE] [--] OLD NEW
-    diff16 -h
+    diff [-u] [-U N] [-o FILE] [--] OLD NEW
+    diff -h
 
 | Option | |
 |---|---|
@@ -71,12 +74,12 @@ On Linux, with `make`, `curl`, `unzip`, `sha256sum` and `xz`:
 
 fetches the pinned libc16 release (`scripts/fetch-libc16`) and the Open
 Watcom snapshot it was built with into `build/`, then builds
-`diff16.exe`. The link map is checked to contain only diff16's objects
+`diff.exe`. The link map is checked to contain only diff16's objects
 and libc16 (`scripts/check-map`). `make LIBC16_ROOT=../libc16` uses a
 libc16 checkout instead.
 
-`make host` builds diff16 for the host with `cc`, for development and
-tests; it writes the same diffs as `diff16.exe`.
+`make host` builds diff for the host with `cc`, for development and
+tests; it writes the same diffs as `diff.exe`.
 
 ## Tests
 
@@ -91,12 +94,12 @@ must be NEW (line endings normalized).
   CR LF, lone CR, hunk boundaries, 70,000-line and 100 KB-line files,
   option and error handling, write errors, temporary-file fallback) and
   300 random pairs (`FUZZ=n` for more), on the release build and two
-  stress builds: `diff16-tiny` (search limit 4 and one page of memory per
+  stress builds: `diff-tiny` (search limit 4 and one page of memory per
   array, so the limit and temporary files are always in use) and
-  `diff16-weak` (most line keys collide, so byte verification has to
+  `diff-weak` (most line keys collide, so byte verification has to
   catch them).
-- `make test-dos` runs `diff16.exe` and the stress builds in DOSBox-X:
-  `diff16.exe` must write exactly what the host build writes, the
+- `make test-dos` runs `diff.exe` and the stress builds in DOSBox-X:
+  `diff.exe` must write exactly what the host build writes, the
   stress builds' diffs must patch correctly, and `-o` must refuse every
   alias of an input (`.\OLD.TXT`, `C:OLD.TXT`, `OLD.TXTX`, ...).
 

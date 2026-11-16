@@ -7,9 +7,9 @@
 #define CONTEXT_MAX 99
 
 static const char usage_text[] =
-    "diff16 " VERSION " - compare text files, writing a unified diff\n"
+    "diff " VERSION " - compare text files, writing a unified diff\n"
     "\n"
-    "usage: diff16 [-u] [-U N] [-o FILE] [--] OLD NEW\n"
+    "usage: diff [-u] [-U N] [-o FILE] [--] OLD NEW\n"
     "\n"
     "  -u       unified format (the default, and the only format)\n"
     "  -U N     N lines of context, 0 to 99 (default 3)\n"
@@ -43,7 +43,7 @@ void main_cleanup(void)
 static void usage_error(const char *a, const char *b)
 {
     err_msg(a, b, NULL);
-    err_str("Try 'diff16 -h' for help.\n");
+    err_str("Try 'diff -h' for help.\n");
     exit(EXIT_TROUBLE);
 }
 

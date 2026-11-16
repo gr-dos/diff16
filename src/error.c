@@ -4,10 +4,10 @@
 
 static int dying;
 
-/* "diff16: a: b: c", leaving out null parts */
+/* "diff: a: b: c", leaving out null parts */
 void err_msg(const char *a, const char *b, const char *c)
 {
-    err_str("diff16: ");
+    err_str("diff: ");
     err_str(a);
     if (b) {
         err_str(": ");
