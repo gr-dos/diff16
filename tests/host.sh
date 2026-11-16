@@ -210,6 +210,18 @@ expect o.txt '--- abc
 # options and errors
 
 status 0 "$D" -h
+# --version: exactly "diff (dos-diff16) VERSION\n" on standard output,
+# nothing on standard error, exit 0
+printf 'diff (dos-diff16) %s\n' "$(cat "$top/VERSION")" > version.want
+for b in $BUILDS; do
+    "$b" --version > out.txt 2> err.txt
+    rc=$?
+    [ "$rc" = 0 ] && cmp -s version.want out.txt && [ ! -s err.txt ] \
+        && ok || not_ok "$b --version: exit $rc, wrote '$(cat out.txt)'"
+done
+"$D" -h | grep -q -- '--version' && ok || not_ok "-h does not list --version"
+status 2 "$D" --versio
+status 2 "$D" -version
 status 0 "$D" -u one one
 status 1 "$D" -u one empty
 status 2 "$D"

@@ -18,13 +18,15 @@ it apart from diffs for 32-bit and larger systems.
 
     diff [-u] [-U N] [-o FILE] [--] OLD NEW
     diff -h
+    diff --version
 
 | Option | |
 |---|---|
 | `-u` | unified format (the default, and the only format) |
 | `-U N` | `N` lines of context, 0 to 99 (default 3) |
 | `-o FILE` | write the diff to `FILE`, not standard output; never an input file |
-| `-h` | help (also `-?`, `/?`) |
+| `-h` | help (also `-?`, `/?`, `--help`) |
+| `--version` | print `diff (dos-diff16) VERSION` |
 | `--` | the next arguments are file names, even if they start with `-` |
 
 Exit status: `0` no differences (nothing is written), `1` differences,
